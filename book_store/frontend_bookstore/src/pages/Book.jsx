@@ -1,39 +1,61 @@
-import React from 'react'
-import {useState} from "react"
-import axios from 'axios'
-function Addbook() {
+import React, { useEffect } from 'react'
+import { useState } from 'react';
+import { useParams } from 'react-router-dom'
+import axios from "axios";
+import toast from 'react-hot-toast';
+function Book() {
+ const {id} = useParams()
+ 
+ const [name ,setName] = useState('');
+ const [author, setAuthor]= useState('')
+ const [price,setPrice] = useState(1)
+ const [available,setAvailable] = useState(true)
+ const [description,setDescription] = useState('')
 
+ const formHandler = (e) => {
+   e.preventDefault()
+   if( !(name && author && price && description)){
+     alert("all fields are required")
+     return
+   }
+
+   apiPost()
+
+   
+ }
+ const apiPost = async () => {
+   let addBook = {
+     name,
+     author,
+     price,
+     available,
+     description
+   }
+   console.log(addBook)
+   const add = await axios.put(`http://localhost:8000/books/${id}`,addBook)
+   console.log(add)
+   if(add.statusText === "OK"){
+    toast.success("updated Successfully")
+    return
+   }
+   toast.error("error occured")
+
+ }
+
+const getbyId = async() => {
+  let { data} = await axios.get(`http://localhost:8000/books/${id}`)
   
-  const [name ,setName] = useState('');
-  const [author, setAuthor]= useState('')
-  const [price,setPrice] = useState(1)
-  const [available,setAvailable] = useState(false)
-  const [description,setDescription] = useState('')
+  data = data.bookFound
+  setName(data.name)
+  setAuthor(data.author)
+  setPrice(data.price)
+  setAvailable(data.available)
+  setDescription(data.description)
+}
 
-  const formHandler = (e) => {
-    e.preventDefault()
-    if( !(name && author && price && description)){
-      alert("all fields are required")
-      return
-    }
-
-    apiPost()
-
-    
-  }
-  const apiPost = async () => {
-    let addBook = {
-      name,
-      author,
-      price,
-      available,
-      description
-    }
-    console.log(addBook)
-    const add = await axios.post("http://localhost:8000/books",addBook)
-    console.log(add)
-
-  }
+useEffect(()=> {
+   getbyId()
+},[id])
 
   return (
     <div className=' my-[3rem] '>
@@ -63,7 +85,7 @@ function Addbook() {
         </div>
       <div className='text-center'>
       <button type='submit' className='px-3 py-1 rounded-sm bg-green-600 text-white hover:opacity-80 text-center'>
-          Add Book
+          Update
         </button>
       </div>
       </form>
@@ -72,4 +94,4 @@ function Addbook() {
   )
 }
 
-export default Addbook
+export default Book
