@@ -1,4 +1,4 @@
-import mongoose, { model } from "mongoose";
+import mongoose from "mongoose";
 
 const bookSchema = new mongoose.Schema({
   name:{
@@ -13,14 +13,14 @@ const bookSchema = new mongoose.Schema({
     type: String,
   },
   price : {
-    type: String,
+    type: Number,
     required:[true, 'mandatory price']
   },
   available : {
     type :Boolean, 
     required:true
   }
-
+  
 })
 
 export default mongoose.model("Book",bookSchema)
